@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cápsula de sueños — 12 deseos para ti</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@300;500;700&family=Homemade+Apple&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --primary: #ffb3c1;
+            --accent: #ffd166;
+            --soft: #cde7ff;
+            --text: #f4f6ff;
+            --muted: #a9b2c7;
+            --heart: #ff5a7a;
+            --card: #101528;
+            --ring: #1a2238;
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        html,
+        body {
+            height: 100%
+        }
+
+        body {
+            margin: 0;
+            background: radial-gradient(1200px at 50% 70%, #0e1426, var(--bg));
+            color: var(--text);
+            font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", "sans-serif";
+            overflow-x: hidden;
+        }
+
+        canvas#sky {
+            position: fixed;
+            inset: 0;
+            z-index: -1
+        }
+
+        .overlay-gradient {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: linear-gradient(to top, rgba(11, 15, 26, 1) 0%, rgba(11, 15, 26, 0.4) 40%, rgba(11, 15, 26, 0) 60%, rgba(11, 15, 26, 0.6) 100%);
+            z-index: -1;
+        }
+
+        header {
+            text-align: center;
+            padding: 28px 16px 10px;
+        }
+
+        .title {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(26px, 6vw, 44px);
+            letter-spacing: 0.5px;
+            color: var(--primary);
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: clamp(14px, 2.8vw, 18px)
+        }
+
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+            margin: 16px auto 0;
+        }
+
+        .time-box {
+            background: linear-gradient(180deg, #131a32, #0d1429);
+            border: 1px solid #243154;
+            border-radius: 14px;
+            padding: 10px 14px;
+            min-width: 70px;
+            text-align: center;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+        }
+
+        .time-box .num {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--soft)
+        }
+
+        .time-box .lbl {
+            font-size: 11px;
+            color: var(--muted)
+        }
+
+        .section {
+            max-width: 980px;
+            margin: 22px auto;
+            padding: 0 16px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, var(--card), #0c1226);
+            border: 1px solid #202a44;
+            border-radius: 18px;
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
+        }
+
+        .typewriter {
+            font-size: clamp(16px, 3.4vw, 22px);
+            line-height: 1.5;
+            color: var(--text);
+            min-height: 72px;
+            position: relative;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #fff;
+            margin-left: 6px;
+            animation: blink 1s infinite;
+            vertical-align: -2px;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0
+            }
+        }
+
+        .grapes {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 10px;
+            margin-top: 12px;
+        }
+
+        .grape {
+            background: radial-gradient(circle at 30% 30%, #8e2de2, #5b18a6);
+            border: 1px solid #2a0d4f;
+            border-radius: 50%;
+            aspect-ratio: 1/1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            position: relative;
+            box-shadow: 0 10px 24px rgba(93, 24, 166, 0.45);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+        }
+
+        .grape:hover {
+            transform: translateY(-2px) scale(1.02);
+            filter: saturate(1.1)
+        }
+
+        .grape.done {
+            background: radial-gradient(circle at 30% 30%, #06d6a0, #11866e);
+            box-shadow: 0 12px 26px rgba(6, 214, 160, 0.45);
+        }
+
+        .wish {
+            margin-top: 10px;
+            padding: 12px;
+            border: 1px dashed #2a365a;
+            border-radius: 12px;
+            color: var(--soft);
+            font-size: 14px;
+            background: #0b1328;
+        }
+
+        .progress {
+            margin-top: 12px;
+            height: 8px;
+            background: #111a33;
+            border-radius: 99px;
+            overflow: hidden;
+            border: 1px solid #223155;
+        }
+
+        .bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #06d6a0, #ffd166)
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 14px;
+        }
+
+        .btn {
+            background: linear-gradient(180deg, #1f2947, #151b34);
+            color: #fff;
+            border: 1px solid #2a365a;
+            border-radius: 12px;
+            padding: 10px 14px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+            transition: transform 0.15s ease, filter 0.15s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.06)
+        }
+
+        .btn.primary {
+            border-color: #4a5fb0;
+            background: linear-gradient(180deg, #32457f, #22335f)
+        }
+
+        .ring {
+            position: relative;
+            width: min(640px, 90vw);
+            height: min(640px, 90vw);
+            margin: 12px auto;
+            border-radius: 50%;
+            background: radial-gradient(800px at 50% 50%, #0f1430, var(--ring));
+            border: 1px solid #243154;
+            box-shadow: inset 0 0 40px rgba(255, 255, 255, 0.04), 0 18px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .photo {
+            position: absolute;
+            width: 110px;
+            height: 110px;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid #2a365a;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+            cursor: pointer;
+            transform-origin: 50% 50%;
+        }
+
+        .photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover
+        }
+
+        .modal {
+            position: fixed;
+            inset: 0;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.65);
+            z-index: 50;
+        }
+
+        .modal-content {
+            max-width: min(90vw, 880px);
+            max-height: 86vh;
+            border-radius: 18px;
+            overflow: hidden;
+            background: #0e1530;
+            border: 1px solid #243154;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-content img {
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .letter {
+            margin-top: 12px;
+            padding: 18px;
+            border-radius: 18px;
+            background: linear-gradient(180deg, #fdf3f6, #f7e8ee);
+            color: #3b2b2f;
+            border: 1px solid #ebc3cf;
+            box-shadow: 0 12px 28px rgba(255, 90, 122, 0.25);
+            display: none;
+        }
+
+        .letter h3 {
+            margin: 0 0 10px;
+            font-family: "Playfair Display", serif;
+            color: #992e47
+        }
+
+        .handwrite {
+            font-family: "Homemade Apple", cursive;
+            font-size: 18px;
+            line-height: 1.7
+        }
+
+        .hold-tip {
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        footer {
+            text-align: center;
+            color: var(--muted);
+            padding: 18px 12px;
+            font-size: 13px;
+        }
+
+        .heart-path svg {
+            width: 100%;
+            height: 160px
+        }
+
+        .heart-path path {
+            stroke: var(--heart);
+            stroke-width: 3;
+            fill: none;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            stroke-dasharray: 820;
+            stroke-dashoffset: 820;
+            transition: stroke-dashoffset 2.6s ease;
+            filter: drop-shadow(0 0 6px rgba(255, 90, 122, 0.6));
+        }
+
+        @media (max-width:560px) {
+            .grapes {
+                grid-template-columns: repeat(3, minmax(0, 1fr))
+            }
+
+            .photo {
+                width: 86px;
+                height: 86px;
+                border-radius: 12px
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="sky"></canvas>
+    <div class="overlay-gradient"></div>
+
+    <header>
+        <div class="title">Cápsula de sueños — 12 deseos para <span id="herName"></span></div>
+        <div class="subtitle">Cada uva es un deseo. Cada deseo, un paso hacia nuestro año perfecto.</div>
+
+        <div class="countdown" id="countdown">
+            <div class="time-box">
+                <div class="num" id="dd">00</div>
+                <div class="lbl">Días</div>
+            </div>
+            <div class="time-box">
+                <div class="num" id="hh">00</div>
+                <div class="lbl">Horas</div>
+            </div>
+            <div class="time-box">
+                <div class="num" id="mm">00</div>
+                <div class="lbl">Min</div>
+            </div>
+            <div class="time-box">
+                <div class="num" id="ss">00</div>
+                <div class="lbl">Seg</div>
+            </div>
+        </div>
+    </header>
+
+    <section class="section card">
+        <div class="typewriter"><span id="tw"></span><span class="cursor"></span></div>
+        <div class="actions">
+
+            <button class="btn" id="musicBtn">Encender fuegos</button>
+            <span class="hold-tip">Mantén presionado el botón “Carta” durante 3 s para leerla.</span>
+            <button class="btn" id="letterBtn">Carta</button>
+            <section class="section card" id="videoSection" style="display:none">
+                <h3>Para ti</h3>
+                <video id="loveVideo" width="100%" controls>
+                    <source src="vid.mp4" type="video/mp4">
+                    Tu navegador no soporta video HTML5.
+                </video>
+            </section>
+
+        </div>
+    </section>
+
+    <section class="section card">
+        <h3 style="margin:0 0 10px">Ritual de las 12 uvas — Nuestros deseos</h3>
+        <p>Pide Tus deseos mi amor para este año, se que no estoy contigo fisicamente, pero eso no significa</p>
+        <p>que no estemos juntos en el corazón. Cada deseo es un paso hacia nuestro futuro compartido.</p>
+        <p>Te Amo Mucho...</p>
+        <div class="grapes" id="grapes"></div>
+        <div class="wish" id="wishBox">Haz clic en una uva para revelar el deseo.</div>
+        <div class="progress">
+            <div class="bar" id="bar"></div>
+        </div>
+        <div class="heart-path" id="heartPath">
+            <svg viewBox="0 0 200 160" preserveAspectRatio="xMidYMid meet">
+                <path id="heartCurve" d="M100,142
+          C 70,120 40,98 40,70
+          C 40,43 60,27 82,33
+          C 94,36 100,49 100,58
+          C 100,49 106,36 118,33
+          C 140,27 160,43 160,70
+          C 160,98 130,120 100,142 Z" />
+            </svg>
+        </div>
+    </section>
+
+    <section class="section card">
+        <h3 style="margin:0 0 10px">Nuestro anillo de recuerdos</h3>
+        <div class="ring" id="ring"></div>
+        <div class="modal" id="modal">
+            <div class="modal-content">
+                <img id="modalImg" alt="Recuerdo">
+            </div>
+        </div>
+    </section>
+
+    <section class="section card" id="letter" aria-hidden="true">
+        <h3>Mi carta para ti</h3>
+        <div id="letterContent" class="handwrite">
+            Este año nuevo, quiero que sepas cuánto significas para mí. <br>
+            Aunque la distancia nos separe, mi corazón siempre está contigo. <br>
+            Cada día que pasa, mi amor por ti crece más fuerte y más profundo. <br>
+            Con mucho amor para Ti...
+        </div>
+    </section>
+
+    <footer>Hecho con amor por Edwin Osco — <span id="year"></span></footer>
+
+    <!-- Música opcional: descomenta y coloca tu archivo -->
+    <audio id="audio" src="teamo.mp3" preload="auto"></audio>
+
+    <script>
+        // ============ Personalización ============
+        const HER_NAME = "Mi amor";
+        const typewriterLines = [
+            "Este año nuevo no es un punto final.",
+            "Es una puerta abierta a todo lo que vamos a vivir.",
+            "Prometo hacer de cada día un motivo para celebrar tu existencia.",
+            "Brindemos por nuestra forma favorita de estar: juntos.",
+            "Que cada deseo que pidas hoy se convierta en nuestra realidad.",
+            "Te elijo hoy, mañana y todos los días del año que viene.",
+            "Gracias por ser mi compañera de aventuras y sueños.",
+            "Este año, hagamos que cada momento cuente.",
+            "Por un año lleno de risas, amor y complicidad.",
+            "Contigo, cada día es una nueva oportunidad para ser felices.",
+            "Feliz Año Nuevo, mi amor. Te amo más de lo que las palabras pueden expresar."
+        ];
+        const grapeWishes = [
+            "Salud para cuidarnos con paciencia y cariño.",
+            "Tiempo de calidad: domingos de paseo y café.",
+            "Viaje sorpresa (aunque sea chiquito) para estrenar fotos.",
+            "Aprender algo juntos: una receta, un baile, un idioma.",
+            "Risas hasta que duela la panza.",
+            "Metas compartidas y pequeños logros cada mes.",
+            "Descansos sin culpa y abrazos largos.",
+            "Escucharnos mejor, incluso cuando el día esté pesado.",
+            "Pequeños detalles que digan: te elegí hoy otra vez.",
+            "Fotos nuevas para nuestro anillo de recuerdos.",
+            "Un proyecto creativo en pareja.",
+            "Celebrar cada victoria con un beso."
+        ];
+        const photos = [
+            { src: "princesa.jpeg", alt: "Nosotros 1" },
+            { src: "juntos.jpeg", alt: "Nosotros 2" },
+            { src: "juntos1.jpeg", alt: "Nosotros 3" },
+            { src: "reina.jpeg", alt: "Nosotros 4" },
+            { src: "reina1.jpeg", alt: "Nosotros 5" },
+            { src: "prince2.jpeg", alt: "Nosotros 6" },
+            { src: "princesa1.jpeg", alt: "Nosotros 7" },
+            { src: "princesa2.jpeg", alt: "Nosotros 8" }
+        ];
+
+        document.getElementById("herName").textContent = HER_NAME;
+        document.getElementById("year").textContent = new Date().getFullYear();
+
+        // ============ Cuenta regresiva ============
+        function nextMidnightLocal() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const target = new Date(y, 11, 31, 23, 59, 59, 999); // 31-dic 23:59:59 local
+            if (now > target) {
+                return new Date(y + 1, 11, 31, 23, 59, 59, 999);
+            }
+            return target;
+        }
+        const targetTime = nextMidnightLocal();
+        const cdEls = { dd: document.getElementById("dd"), hh: document.getElementById("hh"), mm: document.getElementById("mm"), ss: document.getElementById("ss") };
+
+        let newYearTriggered = false;
+        function pad(n) { return String(n).padStart(2, "0") }
+        function updateCountdown() {
+            const now = new Date();
+            let diff = targetTime - now;
+            if (diff <= 0) {
+                if (!newYearTriggered) {
+                    newYearTriggered = true;
+                    celebrateNewYear();
+                }
+                diff = 0;
+            }
+            const s = Math.floor(diff / 1000);
+            const d = Math.floor(s / 86400);
+            const h = Math.floor((s % 86400) / 3600);
+            const m = Math.floor((s % 3600) / 60);
+            const sec = s % 60;
+            cdEls.dd.textContent = pad(d);
+            cdEls.hh.textContent = pad(h);
+            cdEls.mm.textContent = pad(m);
+            cdEls.ss.textContent = pad(sec);
+        }
+        setInterval(updateCountdown, 250);
+        updateCountdown();
+
+        function celebrateNewYear() {
+            typewriterLines.unshift("¡Feliz Año Nuevo! Te elijo hoy y todos los días.");
+            launchBurst(6);
+            const audio = document.getElementById("audio"); audio && audio.play().catch(() => { });
+        }
+
+        // ============ Máquina de escribir ============
+        const tw = document.getElementById("tw");
+        let lineIndex = 0, charIndex = 0;
+        function typeNextChar() {
+            const line = typewriterLines[lineIndex] || "";
+            tw.textContent = line.slice(0, charIndex++);
+            if (charIndex <= line.length) {
+                setTimeout(typeNextChar, 28);
+            } else {
+                setTimeout(() => {
+                    charIndex = 0; lineIndex = (lineIndex + 1) % typewriterLines.length; typeNextChar();
+                }, 1500);
+            }
+        }
+        typeNextChar();
+
+        // ============ 12 uvas ============
+        const grapesEl = document.getElementById("grapes");
+        const wishBox = document.getElementById("wishBox");
+        const bar = document.getElementById("bar");
+        const saved = JSON.parse(localStorage.getItem("grapeDone") || "[]");
+        const done = new Set(saved);
+
+        grapeWishes.forEach((wish, i) => {
+            const b = document.createElement("button");
+            b.className = "grape" + (done.has(i) ? " done" : "");
+            b.textContent = String(i + 1);
+            b.setAttribute("aria-label", "Uva " + (i + 1));
+            b.addEventListener("click", () => {
+                wishBox.textContent = wish;
+                b.classList.add("done");
+                done.add(i);
+                localStorage.setItem("grapeDone", JSON.stringify([...done]));
+                updateProgress();
+                if (done.size === grapeWishes.length) {
+                    drawHeartPath();
+                    launchBurst(8);
+                } else {
+                    launchBurst(1);
+                }
+            });
+            grapesEl.appendChild(b);
+        });
+        function updateProgress() {
+            const p = Math.round((done.size / grapeWishes.length) * 100);
+            bar.style.width = p + "%";
+        }
+        updateProgress();
+
+        // ============ Carta secreta (press and hold) ============
+        const letterBtn = document.getElementById("letterBtn");
+        const letter = document.getElementById("letter");
+        let pressTimer = null;
+        letterBtn.addEventListener("mousedown", startHold);
+        letterBtn.addEventListener("touchstart", startHold);
+        letterBtn.addEventListener("mouseup", cancelHold);
+        letterBtn.addEventListener("mouseleave", cancelHold);
+        letterBtn.addEventListener("touchend", cancelHold);
+
+        function startHold(e) {
+            e.preventDefault();
+            cancelHold();
+            pressTimer = setTimeout(() => {
+                letter.style.display = "block";
+                letter.setAttribute("aria-hidden", "false");
+
+                // Mostrar el video
+                const videoSection = document.getElementById("videoSection");
+                const loveVideo = document.getElementById("loveVideo");
+                videoSection.style.display = "block";
+                loveVideo.play(); // reproduce automáticamente
+
+                launchBurst(4);
+            }, 3000);
+        }
+
+        function cancelHold() {
+            if (pressTimer) { clearTimeout(pressTimer); pressTimer = null; }
+        }
+
+        // ============ Anillo de recuerdos (fotos en órbita) ============
+        const ring = document.getElementById("ring");
+        const modal = document.getElementById("modal");
+        const modalImg = document.getElementById("modalImg");
+
+        function placePhotos() {
+            const N = photos.length;
+            const centerX = ring.clientWidth / 2;
+            const centerY = ring.clientHeight / 2;
+            const radius = Math.min(ring.clientWidth, ring.clientHeight) / 2 - 70;
+            for (let i = 0; i < N; i++) {
+                const p = document.createElement("div");
+                p.className = "photo";
+                const img = document.createElement("img");
+                img.src = photos[i].src; img.alt = photos[i].alt;
+                p.appendChild(img);
+                const theta = (i / N) * Math.PI * 2;
+                const x = centerX + radius * Math.cos(theta) - 55;
+                const y = centerY + radius * Math.sin(theta) - 55;
+                p.style.left = x + "px"; p.style.top = y + "px";
+                p.style.transform = `rotate(${theta}rad)`;
+                p.addEventListener("click", () => {
+                    modalImg.src = photos[i].src;
+                    modalImg.alt = photos[i].alt;
+                    modal.style.display = "flex";
+                });
+                ring.appendChild(p);
+            }
+        }
+        placePhotos();
+        modal.addEventListener("click", () => { modal.style.display = "none"; });
+
+        // ============ Corazón (constelación) ============
+        function drawHeartPath() {
+            const heart = document.getElementById("heartCurve");
+            heart.style.strokeDashoffset = 0;
+            setTimeout(() => { heart.style.strokeDashoffset = 0; }, 30);
+        }
+
+        // ============ Fuegos artificiales ============
+        const sky = document.getElementById("sky");
+        const ctx = sky.getContext("2d");
+        let W, H;
+        function resize() {
+            W = sky.width = window.innerWidth;
+            H = sky.height = window.innerHeight;
+        }
+        resize(); addEventListener("resize", resize);
+
+        const particles = [];
+        function rand(min, max) { return Math.random() * (max - min) + min }
+
+        function launchBurst(count = 4) {
+            for (let i = 0; i < count; i++) {
+                const x = rand(W * 0.2, W * 0.8);
+                const y = rand(H * 0.1, H * 0.5);
+                createExplosion(x, y);
+            }
+        }
+
+        function createExplosion(x, y) {
+            const hue = rand(0, 360);
+            for (let i = 0; i < 80; i++) {
+                particles.push({
+                    x, y,
+                    vx: Math.cos(i / 80 * Math.PI * 2) * rand(0.8, 3.2),
+                    vy: Math.sin(i / 80 * Math.PI * 2) * rand(0.8, 3.2),
+                    life: rand(40, 90),
+                    age: 0,
+                    color: `hsl(${hue}, 80%, ${rand(50, 70)}%)`
+                });
+            }
+        }
+
+        function step() {
+            ctx.clearRect(0, 0, W, H);
+            // estrellas suaves
+            ctx.fillStyle = "rgba(255,255,255,0.08)";
+            for (let s = 0; s < 100; s++) {
+                ctx.fillRect((s * 37) % W, (s * 91) % H, 2, 2);
+            }
+            // partículas
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.x += p.vx; p.y += p.vy;
+                p.vy += 0.02; // gravedad leve
+                p.age++;
+                const alpha = Math.max(0, (p.life - p.age) / p.life);
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = p.color;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+                ctx.fill();
+                if (p.age >= p.life) { particles.splice(i, 1); }
+            }
+            ctx.globalAlpha = 1;
+            requestAnimationFrame(step);
+        }
+        step();
+
+        // ============ Botón “Encender fuegos” ============
+        document.getElementById("musicBtn").addEventListener("click", () => {
+            launchBurst(6);
+            const audio = document.getElementById("audio"); audio && audio.play().catch(() => { });
+        });
+    </script>
+</body>
+
+</html>
